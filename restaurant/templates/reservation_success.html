@@ -1,0 +1,8 @@
+<h1>Reservation Status</h1>
+
+{% if status == "success" %}
+    <p style="color: green;">Payment successful! Your table has been reserved.</p>
+{% else %}
+    <p style="color: red;">Payment failed. Please try again.</p>
+    <a href="{% url 'make_reservation' %}">Retry Reservation</a>
+{% endif %}

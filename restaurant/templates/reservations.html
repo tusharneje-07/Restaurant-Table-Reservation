@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Reservations</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Restaurant Reservations</h1>
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>Customer Name</th>
+                    <th>Table Number</th>
+                    <th>Date</th>
+                    <th>Arrival Time</th>
+                    <th>Departure Time</th>
+                </tr>
+                {% for reservation in reservations %}
+                <tr>
+                    <td>{{ reservation.customer_name }}</td>
+                    <td>{{ reservation.table.id }}</td>
+                    <td>{{ reservation.date }}</td>
+                    <td>{{ reservation.arrival_time }}</td>
+                    <td>{{ reservation.departure_time }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

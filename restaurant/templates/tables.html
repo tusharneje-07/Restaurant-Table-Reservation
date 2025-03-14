@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tables List</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Tables</h1>
+        <div class="table-container">
+            <table>
+                <tr>
+                    <th>Table Number/ID</th>
+                    <th>Seats</th>
+                </tr>
+                <tr>
+                    <td>{{Table.id}}</td>
+                    <td>{{Table.seats}}</td>
+                </tr>
+
+            </table>
+        </div>
+    </div>
+    
+</body>
+</html>
