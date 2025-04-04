@@ -7,6 +7,8 @@ show tables;
 
 select 	*  from restaurant_reservation;
 
+select 	*  from restaurant_table;
+
 
 insert into restaurant_table(
 	seats

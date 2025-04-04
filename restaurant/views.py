@@ -53,14 +53,23 @@ def reservation_list(request):
 def make_reservation(request):
     if request.method == 'POST':
         customer_name = request.POST['customer_name']
+        contact_number=request.POST['contact_number']
         table_id = request.POST['table']
         date = request.POST['date']
         arrival_time = request.POST['arrival_time']
         departure_time = request.POST['departure_time']
 
-        table = Table.objects.get(id=table_id)
+
+
+        if request.POST['table']=='custom' :
+            custom_seats=int(request.POST['custom_seats'])
+            table=Table.objects.create(seats=custom_seats)
+        else:
+            table = Table.objects.get(id=table_id)
+
         new_reservation = Reservation(
             customer_name=customer_name,
+            contact_number=contact_number,
             table=table,
             date=date,
             arrival_time=arrival_time,
@@ -68,8 +77,9 @@ def make_reservation(request):
         )
 
         if new_reservation.is_table_available():
-            return redirect('payment_page', customer_name=customer_name, table_id=table.id, date=date,
-                            arrival_time=arrival_time, departure_time=departure_time)
+            return redirect('payment_page', customer_name=customer_name, contact_number=contact_number, table_id=table.id, date=date,
+                arrival_time=arrival_time, departure_time=departure_time)
+
         else:
             return render(request, 'make_reservation.html', {'tables': Table.objects.all(), 'error': 'Table is already reserved for this time.'})
 
@@ -77,7 +87,7 @@ def make_reservation(request):
 
 # Payment Page
 
-def payment_page(request, customer_name, table_id, date, arrival_time, departure_time):
+def payment_page(request, customer_name,contact_number, table_id, date, arrival_time, departure_time):
     table = get_object_or_404(Table, id=table_id)
     try:
         arrival_time = datetime.strptime(arrival_time, "%H:%M:%S").time()
@@ -91,6 +101,7 @@ def payment_page(request, customer_name, table_id, date, arrival_time, departure
 
     reservation = Reservation(
         customer_name=customer_name,
+        contact_number=contact_number,
         table=table,
         date=date,
         arrival_time=arrival_time,
@@ -107,8 +118,11 @@ def payment_page(request, customer_name, table_id, date, arrival_time, departure
         else:
             return redirect("reservation_success", status="failed")
 
+
+
     return render(request, "payment.html", {
         "customer_name": customer_name,
+        "contact_number":contact_number,
         "table": table,
         "date": date,
         "arrival_time": arrival_time,

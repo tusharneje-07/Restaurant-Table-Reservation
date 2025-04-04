@@ -92,12 +92,45 @@ p {
     <label for="customer_name">Name:</label>
     <input type="text" id="customer_name" name="customer_name" required>
 
+    <label for="contact_number">Contact Number:</label>
+    <input type="text" id="contact_number" name="contact_number" required>
+
     <label for="table">Select Table:</label>
-    <select id="table" name="table" required>
+    <select id="table" name="table" required >
         {% for table in tables %}
         <option value="{{ table.id }}">Table {{ table.id }} (Seats: {{ table.seats }})</option>
         {% endfor %}
+        <option value="custom">Other (Enter required number of seats)</option>
     </select>
+
+    <div id="customSeatsDiv" style="display: none;margin-top: 10px;" >
+        <label for="custom_seats">Enter number of seats:</label>
+        <input type="number" name="custom_seats" id="custom_seats" min="1" required>
+    </div>
+
+
+    <script>
+
+        function customSeatsToggle(){
+            const tableSelect=document.getElementById('table');
+            const customSeatsDiv=document.getElementById('customSeatsDiv');
+            const customSeatsInput=document.getElementById('custom_seats');
+
+
+            if(tableSelect.value==='custom'){
+                customSeatsDiv.style.display='block';
+                customSeatsInput.required=true;
+            }
+            else{
+                customSeatsDiv.style.display='none';
+                customSeatsInput.required=false;
+            }
+
+
+        }
+        window.onload=customSeatsToggle;
+        document.getElementById('table').addEventListener('change',customSeatsToggle);
+    </script>
 
     <label for="date">Date:</label>
     <input type="date" id="date" name="date" required>

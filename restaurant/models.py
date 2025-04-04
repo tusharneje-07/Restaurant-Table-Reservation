@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
 from django.forms import ValidationError
+from django.core.validators import RegexValidator
+from django.contrib import admin
 
 class Table(models.Model):
     id = models.AutoField(primary_key=True)
@@ -19,6 +21,17 @@ class Reservation(models.Model):
     ]
 
     customer_name = models.CharField(max_length=100)
+    contact_number=models.CharField(
+        max_length=10 ,
+        default='9999999999',
+        validators=[
+            RegexValidator(
+                regex=r'^\d{10}$',
+                message='Enter 10 digit contact number',
+                code='invalid_contact_number'
+            )
+        ]
+    )
     table = models.ForeignKey(Table, on_delete=models.CASCADE)
     date = models.DateField()
     arrival_time = models.TimeField()
@@ -96,6 +109,10 @@ class Payment(models.Model):
         return f"Payment {self.id} - {self.status}"
     
 
+
+admin.site.register(Table)
+admin.site.register(Reservation)
+admin.site.register(Payment)
 
 
 
