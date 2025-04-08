@@ -11,6 +11,14 @@
 
     <div class="container">
         <h1>Restaurant Reservations</h1>
+
+        <form method="get"  action="">
+            <label for="filter-date">Select Date:</label>
+            <input type="date" id="filter-date" name="date" value="{{request.get.date}}">
+            <button type="submit"> Filter</button>
+        </form>
+
+
         <div class="table-container">
             <table>
                 <tr>
@@ -28,6 +36,11 @@
                     <td>{{ reservation.arrival_time }}</td>
                     <td>{{ reservation.departure_time }}</td>
                 </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No reservations found for this date.</td>
+                </tr>
+
                 {% endfor %}
             </table>
         </div>

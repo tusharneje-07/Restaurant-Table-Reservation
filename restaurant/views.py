@@ -45,7 +45,13 @@ class ReservationCreateView(generics.CreateAPIView):
 
 # List Reservations
 def reservation_list(request):
-    reservations = Reservation.objects.all()
+    selected_date=request.GET.get('date')
+    if selected_date:
+        reservations=Reservation.objects.filter(date=selected_date)
+    else:
+        reservations=Reservation.objects.all()
+
+        
     return render(request, 'reservations.html', {'reservations': reservations})
 
 # Make Reservation
