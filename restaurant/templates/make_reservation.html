@@ -1,149 +1,208 @@
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reserve a Table</title>
 
-<style>
-/* General Page Styling */
-body {
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(to right, #65a5ca, #badd1e);
-    color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
+    <!-- Modern font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
-/* Center the form */
-form {
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
-    max-width: 400px;
-    width: 100%;
-    text-align: center;
-}
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f6f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
 
-/* Style Form Labels */
-label {
-    display: block;
-    font-weight: 600;
-    margin-top: 10px;
-    text-align: left;
-}
+        form {
+            background: #ffffff;
+            padding: 30px 28px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 420px;
+            transition: all 0.3s ease;
+        }
 
-/* Style Form Inputs & Select */
-input, select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-    transition: 0.3s ease-in-out;
-}
+        label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-top: 18px;
+            display: block;
+            text-align: left;
+        }
 
-/* Highlight input on focus */
-input:focus, select:focus {
-    border-color: #ff758c;
-    outline: none;
-    box-shadow: 0px 0px 5px rgba(255, 117, 140, 0.6);
-}
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 6px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            background-color: #f9fafb;
+            font-size: 15px;
+            color: #111827;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
 
-/* Submit Button */
-button {
-    margin-top: 15px;
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    background: #09fa05;
-    color: rgb(15, 1, 1);
-    font-size: 18px;
-    cursor: pointer;
-    transition: 0.3s;
-}
+        input:focus, select:focus {
+            border-color: #6366f1;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
 
-button:hover {
-    background: #7743ab;
-    transform: scale(1.05);
-}
+        button {
+            margin-top: 24px;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background-color: #6366f1;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.25s ease, transform 0.2s ease;
+        }
 
-/* Error Message Styling */
-p {
-    color: red;
-    font-size: 14px;
-    font-weight: bold;
-    margin-top: 10px;
-}
+        button:hover {
+            background-color: #4f46e5;
+            transform: translateY(-1px);
+        }
 
-/* Responsive Design */
-@media (max-width: 480px) {
-    form {
-        max-width: 90%;
-        padding: 20px;
-    }
-}
-</style>
+        p {
+            color: #dc2626;
+            font-size: 13px;
+            margin-top: 12px;
+        }
 
-<form action="{% url 'make_reservation' %}" method="POST">
+        #customSeatsDiv {
+            margin-top: 10px;
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            form {
+                padding: 20px;
+                border-radius: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<form action="{% url 'make_reservation' %}" method="POST" onsubmit="return validateTimes();">
     {% csrf_token %}
-    
-    <label for="customer_name">Name:</label>
+
+    <label for="customer_name">Full Name</label>
     <input type="text" id="customer_name" name="customer_name" required>
 
-    <label for="contact_number">Contact Number:</label>
-    <input type="text" id="contact_number" name="contact_number" required>
+    <label for="contact_number">Phone Number</label>
+    <input type="text" id="contact_number" name="contact_number" required pattern="[6-9]{1}[0-9]{9}" title="Enter a valid 10-digit Indian phone number">
 
-    <label for="table">Select Table:</label>
-    <select id="table" name="table" required >
+    <label for="table">Select Table</label>
+    <select id="table" name="table" required>
         {% for table in tables %}
         <option value="{{ table.id }}">Table {{ table.id }} (Seats: {{ table.seats }})</option>
         {% endfor %}
         <option value="custom">Other (Enter required number of seats)</option>
     </select>
 
-    <div id="customSeatsDiv" style="display: none;margin-top: 10px;" >
-        <label for="custom_seats">Enter number of seats:</label>
-        <input type="number" name="custom_seats" id="custom_seats" min="1" required>
+    <div id="customSeatsDiv">
+        <label for="custom_seats">Number of Seats</label>
+        <input type="number" name="custom_seats" id="custom_seats" min="1">
     </div>
 
-
-    <script>
-
-        function customSeatsToggle(){
-            const tableSelect=document.getElementById('table');
-            const customSeatsDiv=document.getElementById('customSeatsDiv');
-            const customSeatsInput=document.getElementById('custom_seats');
-
-
-            if(tableSelect.value==='custom'){
-                customSeatsDiv.style.display='block';
-                customSeatsInput.required=true;
-            }
-            else{
-                customSeatsDiv.style.display='none';
-                customSeatsInput.required=false;
-            }
-
-
-        }
-        window.onload=customSeatsToggle;
-        document.getElementById('table').addEventListener('change',customSeatsToggle);
-    </script>
-
-    <label for="date">Date:</label>
+    <label for="date">Reservation Date</label>
     <input type="date" id="date" name="date" required>
 
-    <label for="arrival_time">Arrival Time:</label>
+    <label for="arrival_time">Arrival Time</label>
     <input type="time" id="arrival_time" name="arrival_time" required>
 
-    <label for="departure_time">Departure Time:</label>
+    <label for="departure_time">Departure Time</label>
     <input type="time" id="departure_time" name="departure_time" required>
 
     <button type="submit">Reserve Table</button>
+
+    {% if error %}
+    <p>{{ error }}</p>
+    {% endif %}
 </form>
 
-{% if error %}
-<p>{{ error }}</p>
-{% endif %}
+<script>
+    
+    function customSeatsToggle() {
+        const tableSelect = document.getElementById('table');
+        const customSeatsDiv = document.getElementById('customSeatsDiv');
+        const customSeatsInput = document.getElementById('custom_seats');
+
+        if (tableSelect.value === 'custom') {
+            customSeatsDiv.style.display = 'block';
+            customSeatsInput.required = true;
+        } else {
+            customSeatsDiv.style.display = 'none';
+            customSeatsInput.required = false;
+        }
+    }
+
+    window.onload = () => {
+        customSeatsToggle();
+        document.getElementById('table').addEventListener('change', customSeatsToggle);
+    };
+
+    
+    function validateTimes() {
+        const dateInput = document.getElementById('date').value;
+        const arrival = document.getElementById('arrival_time').value;
+        const departure = document.getElementById('departure_time').value;
+
+        const now = new Date();
+        const selectedDate = new Date(dateInput + "T00:00");
+        const currentDateString = now.toISOString().split("T")[0];
+
+        if (!arrival || !departure) return false;
+
+        const arrivalTime = new Date(dateInput + "T" + arrival);
+        const departureTime = new Date(dateInput + "T" + departure);
+
+        const openHour = 10;  
+        const closeHour = 23; 
+
+        const openingTime = new Date(dateInput + "T10:00");
+        const closingTime = new Date(dateInput + "T23:00");
+
+        
+        if (arrivalTime < openingTime || departureTime > closingTime) {
+            alert("Reservation must be between 10:00 AM and 11:00 PM.");
+            return false;
+        }
+
+        
+        if (arrivalTime >= departureTime) {
+            alert("Departure time must be after arrival time.");
+            return false;
+        }
+
+        
+        if (dateInput === currentDateString && arrivalTime < now) {
+            alert("Arrival time cannot be in the past.");
+            return false;
+        }
+        
+        
+        if (dateInput < currentDateString ) {
+            alert("Reservation date cannot be in the past.");
+            return false;
+        }
+
+        return true;
+    }
+</script>
+
+</body>
+</html>

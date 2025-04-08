@@ -1,86 +1,103 @@
-<h1>Payment for Reservation</h1>
-
-<style>
-/* General Page Styling */
-body {
-    font-family: 'Poppins', sans-serif;
-    background: #faf9f9;
-    color: #eee;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
-}
-
-/* Payment Box Styling */
-.payment-box {
-    background: rgba(81, 81, 81, 0.9);
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0px 0px 15px rgba(2, 246, 79, 0.7);
-    max-width: 400px;
-    width: 100%;
-    text-align: center;
-}
-
-/* Header Styling */
-h1 {
-    color: rgb(0, 17, 7);
-    text-shadow: 0px 0px 8px rgb(255, 234, 0);
-}
-
-/* Payment Details */
-p {
-    font-size: 18px;
-    margin: 10px 0;
-    color: #ddd;
-}
-
-/* Payment Button */
-button {
-    margin-top: 15px;
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 8px;
-    background: linear-gradient(45deg, #e8ecec, #dbfc02);
-    color: black;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.3s;
-    box-shadow: 0px 0px 10px rgba(2, 245, 14, 0.6);
-}
-
-button:hover {
-    background: linear-gradient(45deg, #00d4ff, #00ffaa);
-    transform: scale(1.05);
-    box-shadow: 0px 0px 20px rgba(0, 255, 170, 1);
-}
-
-/* Responsive Design */
-@media (max-width: 480px) {
-    .payment-box {
-        max-width: 90%;
-        padding: 20px;
-    }
-}
-</style>
-
-<div class="payment-box">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment for Reservation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
-    <p><strong>Name:</strong> {{ customer_name }}</p>
-    <p><strong>Contact Number:</strong> {{ contact_number }}</p>
-    <p><strong>Table:</strong> Table {{ table.id }} (Seats: {{ table.seats }})</p>
-    <p><strong>Date:</strong> {{ date }}</p>
-    <p><strong>Time:</strong> {{ arrival_time }} - {{ departure_time }}</p>
-    <p><strong>Amount:</strong> ₹{{ price }}</p> 
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f4f6f8;
+            color: #111827;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
 
-    <form action="{% url 'payment_page' customer_name contact_number table.id date arrival_time departure_time %}" method="POST">
-        {% csrf_token %}
-        <button type="submit" name="payment_status" value="success">Pay ₹{{ price }}</button>
-    </form>
-</div>
+        .payment-box {
+            background-color: #ffffff;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            max-width: 440px;
+            width: 90%;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 22px;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 15px;
+            color: #4b5563;
+            margin: 8px 0;
+        }
+
+        strong {
+            color: #111827;
+        }
+
+        button {
+            margin-top: 24px;
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background-color: #6366f1;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.25s ease, transform 0.2s ease;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
+        }
+
+        button:hover {
+            background-color: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 480px) {
+            .payment-box {
+                padding: 24px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            p {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-box">
+        <h1>Payment for Reservation</h1>
+
+        <p><strong>Name:</strong> {{ customer_name }}</p>
+        <p><strong>Contact Number:</strong> {{ contact_number }}</p>
+        <p><strong>Table:</strong> Table {{ table.id }} (Seats: {{ table.seats }})</p>
+        <p><strong>Date:</strong> {{ date }}</p>
+        <p><strong>Time:</strong> {{ arrival_time }} - {{ departure_time }}</p>
+        <p><strong>Amount:</strong> ₹{{ price }}</p> 
+
+        <form action="{% url 'payment_page' customer_name contact_number table.id date arrival_time departure_time %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" name="payment_status" value="success">
+                Pay ₹{{ price }}
+            </button>
+        </form>
+    </div>
+</body>
+</html>
