@@ -15,104 +15,298 @@
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% load static %}
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f6f8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #ce1212;
+            --text-color: rgb(44, 22, 22);
+            --light-gray: #ecf0f1;
+            --white: #ffffff;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+        }
+
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+
+        body {
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, rgba(206, 18, 18, 0.1) 0%, rgba(44, 62, 80, 0.1) 100%);
+        }
+
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+            opacity: 0.1;
+        }
+
+        .circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -100px;
+            left: -100px;
+            animation: float-1 15s infinite ease-in-out;
+        }
+
+        .circle:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            top: 50%;
+            right: -50px;
+            animation: float-2 15s infinite ease-in-out;
+        }
+
+        .circle:nth-child(3) {
+            width: 150px;
+            height: 150px;
+            bottom: -50px;
+            left: 20%;
+            animation: float-3 15s infinite ease-in-out;
+        }
+
+        @keyframes float-1 {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -50px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+        @keyframes float-2 {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-30px, 30px) rotate(-120deg); }
+            66% { transform: translate(20px, -20px) rotate(-240deg); }
+            100% { transform: translate(0, 0) rotate(-360deg); }
+        }
+
+        @keyframes float-3 {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(20px, 20px) rotate(70deg); }
+            66% { transform: translate(-30px, -20px) rotate(140deg); }
+            100% { transform: translate(0, 0) rotate(210deg); }
         }
 
         .container {
-            background: #ffffff;
-            padding: 32px;
+            width: 100%;
+            max-width: 500px;
+            z-index: 1;
+        }
+
+        .status-box {
+            background-color: #ffffff;
+            padding: 2rem;
             border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
-            max-width: 440px;
-            width: 90%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
             text-align: center;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .status-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--secondary-color);
+            border-radius: 5px 5px 0 0;
         }
 
         h1 {
-            color: #111827;
+            color: var(--primary-color);
             font-size: 24px;
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
         }
 
-        .success-box {
-            background-color: #d1fae5;
-            color: #065f46;
-            padding: 16px 20px;
+        .status-message {
+            padding: 1.5rem;
             border-radius: 12px;
+            margin-bottom: 1.5rem;
             font-weight: 600;
             font-size: 16px;
-            animation: fadeIn 0.6s ease-out;
-            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .fail-box {
-            color: #dc2626;
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 20px;
+        .success-message {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: var(--success-color);
         }
 
-        a.btn {
+        .error-message {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: var(--error-color);
+        }
+
+        .icon-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .success-icon {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .error-icon {
+            background-color: var(--error-color);
+            color: white;
+        }
+
+        .button {
             display: inline-block;
             padding: 12px 24px;
-            background-color: #ef4444;
-            color: #fff;
+            background-color: var(--secondary-color);
+            color: var(--white);
             text-decoration: none;
             border-radius: 10px;
             font-weight: 600;
-            transition: background-color 0.25s ease, transform 0.2s ease;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
         }
 
-        a.btn:hover {
-            background-color: #dc2626;
-            transform: translateY(-1px);
+        .button:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .timer {
+            margin-top: 1.5rem;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .timer i {
+            color: var(--secondary-color);
+        }
+
+        .timer span {
+            color: var(--secondary-color);
+            font-weight: 600;
         }
 
         @media (max-width: 480px) {
-            .container {
-                padding: 24px;
+            .status-box {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .status-message {
+                padding: 1rem;
+                font-size: 14px;
+            }
+
+            .button {
+                padding: 10px 20px;
+                font-size: 14px;
             }
         }
     </style>
 </head>
 <body>
+    <div class="background">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+    </div>
+    
     <div class="container">
-        <h1>Reservation Status</h1>
+        <div class="status-box">
+            <h1>Reservation Status</h1>
 
-        {% if status == "success" %}
-            <div class="success-box">
-                <i class="fa-solid fa-check-circle" style="margin-right: 8px;"></i>
-                Payment successful! Your table has been reserved.
+            {% if status == "success" %}
+                <div class="status-message success-message">
+                    <div class="icon-circle success-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <span>Payment successful! Your table has been reserved.</span>
+                </div>
+                <a href="/" class="button">
+                    <i class="fas fa-home"></i> Return to Home
+                </a>
+            {% else %}
+                <div class="status-message error-message">
+                    <div class="icon-circle error-icon">
+                        <i class="fas fa-times"></i>
+                    </div>
+                    <span>Payment failed. Please try again.</span>
+                </div>
+                <a href="{% url 'make_reservation' %}" class="button">
+                    <i class="fas fa-redo"></i> Retry Reservation
+                </a>
+            {% endif %}
+
+            <div class="timer">
+                <i class="fas fa-hourglass-half"></i>
+                Redirecting to home in: <span id="countdown">15</span> seconds
             </div>
-        {% else %}
-            <div class="fail-box">
-                Payment failed. Please try again.
-            </div>
-            <a href="{% url 'make_reservation' %}" class="btn">Retry Reservation</a>
-        {% endif %}
+        </div>
     </div>
 
-    <!-- Font Awesome -->
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        // Set the time limit in seconds (15 seconds)
+        let timeLeft = 15;
+        const countdownElement = document.getElementById('countdown');
+
+        function updateTimer() {
+            countdownElement.textContent = timeLeft;
+            
+            if (timeLeft <= 0) {
+                window.location.href = '/';
+            } else {
+                timeLeft--;
+                setTimeout(updateTimer, 1000);
+            }
+        }
+
+        // Start the timer when the page loads
+        updateTimer();
+    </script>
 </body>
 </html>

@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Admin Dashboard - Yummy Restaurant</title>
+  <meta name="description" content="Restaurant Management Dashboard">
+
+  <!-- Favicons -->
+  <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+  <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Amatic+SC:wght@400;700&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #ce1212;
+    }
+    
+    .dashboard-section {
+      padding: 80px 0;
+    }
+    
+    .dashboard-card {
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+      padding: 25px;
+      height: 100%;
+      transition: all 0.3s ease;
+    }
+    
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    }
+    
+    .stats-card {
+      text-align: center;
+      padding: 30px 20px;
+    }
+    
+    .stats-card h3 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--secondary-color);
+      margin-bottom: 10px;
+    }
+    
+    .stats-card p {
+      font-size: 1rem;
+      color: #444;
+    }
+    
+    .chart-container {
+      height: 300px;
+      position: relative;
+    }
+    
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .admin-table th {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 12px 15px;
+      font-weight: 600;
+      text-align: left;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    
+    .admin-table td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .admin-table tr:hover {
+      background-color: #f9f9f9;
+    }
+    
+    .badge-status {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    
+    .badge-booked {
+      background-color: #10b981;
+      color: white;
+    }
+    
+    .badge-canceled {
+      background-color: #ef4444;
+      color: white;
+    }
+    
+    .search-filters {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+    }
+    
+    .file-upload-container {
+      border: 2px dashed #ddd;
+      border-radius: 10px;
+      padding: 30px 20px;
+      text-align: center;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .file-upload-container:hover {
+      border-color: var(--secondary-color);
+    }
+    
+    .file-upload-container i {
+      font-size: 2.5rem;
+      color: var(--secondary-color);
+      margin-bottom: 15px;
+    }
+    
+    .file-preview {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    
+    .image-preview {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+    
+    .form-label {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--primary-color);
+    }
+    
+    /* Responsive tables */
+    .table-responsive {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  </style>
+</head>
+
+<body class="dashboard-page">
+
+  <header id="header" class="header d-flex align-items-center sticky-top">
+    <div class="container position-relative d-flex align-items-center justify-content-between">
+
+      <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
+        <h1 class="sitename">Yummy</h1>
+        <span>.</span>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="#welcome" class="active">Dashboard</a></li>
+          <li><a href="#statistics">Statistics</a></li>
+          <li><a href="#bookings">Bookings</a></li>
+          <li><a href="#menu-management">Menu Management</a></li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+
+      <a class="btn-getstarted" id="top-button" href="/vendor-logout/">Logout</a>
+
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Welcome Section -->
+    <section id="welcome" class="dashboard-section light-background">
+      <div class="container">
+        <div class="row gy-4 justify-content-center">
+          <div class="col-lg-8 text-center" data-aos="fade-up">
+            <h1 style="color: var(--primary-color); font-size: 2.5rem; margin-bottom: 20px;">Welcome, Admin</h1>
+            <p style="color: #555; font-size: 1.1rem; margin-bottom: 30px;">Manage your restaurant operations from this centralized dashboard.</p>
+            <div class="row g-4">
+              <div class="col-md-4">
+                <div class="stats-card dashboard-card">
+                  <i class="bi bi-table" style="font-size: 2.5rem; color: var(--secondary-color);"></i>
+                  <h3>{{ total_table_options|default:"0" }}</h3>
+                  <p>Total Combinations of Tables</p>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="stats-card dashboard-card">
+                  <i class="bi bi-calendar-check" style="font-size: 2.5rem; color: var(--secondary-color);"></i>
+                  <h3>{{ total_bookings|default:"0" }}</h3>
+                  <p>Total Bookings</p>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="stats-card dashboard-card">
+                  <i class="bi bi-currency-rupee" style="font-size: 2.5rem; color: var(--secondary-color);"></i>
+                  <h3>₹{{ total_revenue|default:"0" }}</h3>
+                  <p>Revenue</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section><!-- /Welcome Section -->
+
+    <!-- Statistics Section -->
+    <section id="statistics" class="dashboard-section">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Statistics</h2>
+        <p><span>Analytics</span> <span class="description-title">Overview</span></p>
+      </div>
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row g-4">
+          <div class="col-lg-4">
+            <div class="dashboard-card">
+              <h4 style="margin-bottom: 20px; color: var(--primary-color);">Table Booking Distribution</h4>
+              <div class="chart-container">
+                <canvas id="doughnutChart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="dashboard-card">
+              <h4 style="margin-bottom: 20px; color: var(--primary-color);">Bookings by Status</h4>
+              <div class="chart-container">
+                <canvas id="barChart"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="dashboard-card">
+              <h4 style="margin-bottom: 20px; color: var(--primary-color);">Revenue Trend</h4>
+              <div class="chart-container">
+                <canvas id="lineChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section><!-- /Statistics Section -->
+
+    <!-- Bookings Section -->
+    <section id="bookings" class="dashboard-section light-background">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Bookings</h2>
+        <p><span>Manage</span> <span class="description-title">Reservations</span></p>
+      </div>
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="search-filters" data-aos="fade-up" data-aos-delay="150">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label for="date-from" class="form-label">Date From</label>
+              <input type="date" id="date-from" class="form-control">
+            </div>
+            <div class="col-md-3">
+              <label for="date-to" class="form-label">Date To</label>
+              <input type="date" id="date-to" class="form-control">
+            </div>
+            <div class="col-md-3">
+              <label for="status-filter" class="form-label">Status</label>
+              <select id="status-filter" class="form-select">
+                <option value="">All Statuses</option>
+                <option value="booked">Booked</option>
+                <option value="canceled">Canceled</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="search-input" class="form-label">Search</label>
+              <input type="text" id="search-input" class="form-control" placeholder="Search by name, table...">
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-12 text-end">
+              <button onclick="filterBookings()" class="btn" style="background-color: var(--secondary-color); color: white;">Apply Filters</button>
+              <button onclick="resetFilters()" class="btn btn-light">Reset</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="table-responsive" style="max-height: 500px; overflow-y: auto;" data-aos="fade-up" data-aos-delay="200">
+          <table class="admin-table" id="bookings-table" style="min-width: 800px;">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Customer</th>
+                <th>Contact</th>
+                <th>Table</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Total Price</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if reservations and reservations|length > 0 %}
+                {% for reservation in reservations %}
+                <tr>
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ reservation.customer_name }}</td>
+                  <td>{{ reservation.contact_number }}</td>
+                  <td>Table {{ reservation.table.id }} (Seats: {{ reservation.table.seats }})</td>
+                  <td>{{ reservation.date }}</td>
+                  <td>{{ reservation.arrival_time }} - {{ reservation.departure_time }}</td>
+                  <td>
+                      <span class="badge-status {% if reservation.booking_status == 'booked' %}badge-booked{% else %}badge-canceled{% endif %}">
+                          {{ reservation.booking_status }}
+                        </span>
+                    </td>
+                    <td>₹{{ reservation.total_price }}</td>
+                  <td>
+                    {% if reservation.booking_status == 'booked' %}
+                    <button class="btn btn-sm {% if reservation.booking_status == 'booked' %}btn-danger{% else %}btn-success{% endif %}" 
+                            onclick="changeStatus({{ reservation.id }}, '{% if reservation.booking_status == 'booked' %}canceled{% else %}booked{% endif %}')">
+                      {% if reservation.booking_status == 'booked' %}<i class="bi bi-x-circle"></i>{% else %}<i class="bi bi-check-circle"></i>{% endif %}
+                    </button>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              {% else %}
+                <tr>
+                  <td colspan="8" class="text-center py-5">
+                    <i class="bi bi-calendar-x" style="font-size: 3rem; color: var(--secondary-color); display: block; margin-bottom: 15px;"></i>
+                    <h5>No Reservations Found</h5>
+                    <p>There are no bookings available in the system.</p>
+                  </td>
+                </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section><!-- /Bookings Section -->
+
+    <!-- Menu Management Section -->
+    <section id="menu-management" class="dashboard-section">
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Menu Management</h2>
+        <p><span>Update</span> <span class="description-title">Restaurant Menu</span></p>
+      </div>
+
+      <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <div class="dashboard-card">
+              <h4 style="margin-bottom: 20px; color: var(--primary-color);">Upload Menu Data (CSV)</h4>
+              <div class="file-upload-container" id="csv-upload-container">
+                <i class="bi bi-file-earmark-spreadsheet"></i>
+                <h5>Drop your CSV file here</h5>
+                <p>or</p>
+                <input type="file" id="csv-file" accept=".csv" class="d-none">
+                <button class="btn" style="background-color: var(--secondary-color); color: white;" onclick="document.getElementById('csv-file').click()">Select File</button>
+                <p class="mt-2 small text-muted">CSV file should include columns: name, description, price, category</p>
+              </div>
+              <div id="csv-preview" class="mt-4" style="display: none;">
+                <h5>Uploaded Menu Data</h5>
+                <div class="table-responsive">
+                  <table class="table table-sm">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Category</th>
+                      </tr>
+                    </thead>
+                    <tbody id="csv-data">
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="dashboard-card">
+              <h4 style="margin-bottom: 20px; color: var(--primary-color);">Upload Menu Images</h4>
+              <div class="file-upload-container" id="image-upload-container">
+                <i class="bi bi-images"></i>
+                <h5>Drop your image files here</h5>
+                <p>or</p>
+                <input type="file" id="image-files" accept="image/*" multiple class="d-none">
+                <button class="btn" style="background-color: var(--secondary-color); color: white;" onclick="document.getElementById('image-files').click()">Select Images</button>
+                <p class="mt-2 small text-muted">Supported formats: JPG, PNG, WEBP (Max size: 5MB each)</p>
+              </div>
+              <div id="image-preview" class="file-preview" style="display: none;">
+                <!-- Images will be displayed here -->
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="text-center mt-4" data-aos="fade-up" data-aos-delay="200">
+          <button id="update-menu-btn" class="btn btn-lg" style="background-color: var(--secondary-color); color: white; padding: 12px 25px;" disabled>
+            Update Menu
+          </button>
+        </div>
+      </div>
+    </section><!-- /Menu Management Section -->
+
+  </main>
+
+  <footer id="footer" class="footer dark-background">
+    <div class="container">
+      <div class="copyright text-center mt-4">
+        <p>© <span>Copyright</span> <strong class="px-1 sitename">Yummy</strong> <span>All Rights Reserved</span></p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/purecounter/purecounter_vanilla.js' %}"></script>
+  <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+  <script src="{% static 'assets/js/main.js' %}"></script>
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Dashboard Scripts -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize charts after the DOM is fully loaded
+      setTimeout(() => {
+        initCharts();
+      }, 500);
+      
+      // File upload handlers
+      initFileUploads();
+    });
+    
+    function initCharts() {
+      // Extract data from the bookings table
+      const tableData = extractTableData();
+      
+      console.log("Extracted table data:", tableData);
+      
+      if (tableData.tables.length > 0) {
+        // Create charts based on table data
+        createDoughnutChart(tableData);
+        createBarChart(tableData);
+        createLineChart(tableData);
+      } else {
+        console.log('No booking data available for charts');
+        // Display empty charts with a message
+        displayEmptyCharts();
+      }
+    }
+    
+    function extractTableData() {
+      const tables = {};
+      const dateMap = {};
+      const statusMap = {};
+      let totalRevenue = 0;
+      let totalBookings = 0;
+      
+      // Get all rows from the bookings table (excluding header and any "no data" rows)
+      const rows = Array.from(document.querySelectorAll('#bookings-table tbody tr')).filter(row => 
+        row.cells.length >= 5 && !row.querySelector('td[colspan]')
+      );
+      
+      if (rows.length === 0) {
+        console.log('No booking data found in table');
+        return {
+          tables: [],
+          counts: [],
+          revenues: [],
+          booked: [],
+          canceled: [],
+          months: [],
+          monthlyBookings: [],
+          monthlyRevenue: [],
+          monthlyBooked: [],
+          monthlyCanceled: [],
+          totalRevenue: 0,
+          statusDistribution: {
+            booked: 0,
+            canceled: 0,
+            unknown: 0
+          }
+        };
+      }
+      
+      // For debugging - log table structure
+      console.log('Table rows:', rows.length);
+      if (rows.length > 0) {
+        console.log('First row cells:', rows[0].cells.length);
+        Array.from(rows[0].cells).forEach((cell, i) => {
+          console.log(`Cell ${i}: ${cell.textContent.trim()}`);
+        });
+      }
+      
+      // Determine column indices by analyzing table headers
+      const headerCells = document.querySelectorAll('#bookings-table thead th');
+      const headerTexts = Array.from(headerCells).map(cell => cell.textContent.trim().toLowerCase());
+      
+      console.log('Table headers:', headerTexts);
+      
+      const customerIndex = headerTexts.findIndex(text => text.includes('customer'));
+      const tableIndex = headerTexts.findIndex(text => text.includes('table'));
+      const dateIndex = headerTexts.findIndex(text => text.includes('date'));
+      const timeIndex = headerTexts.findIndex(text => text.includes('time'));
+      const statusIndex = headerTexts.findIndex(text => text.includes('status'));
+      const priceIndex = headerTexts.findIndex(text => text.includes('price') || text.includes('total'));
+      
+      console.log(`Column indices - Customer: ${customerIndex}, Table: ${tableIndex}, Date: ${dateIndex}, Status: ${statusIndex}, Price: ${priceIndex}`);
+      
+      // Use default indices if header analysis fails
+      const getTableCell = (row) => row.cells[tableIndex !== -1 ? tableIndex : 3];
+      const getDateCell = (row) => row.cells[dateIndex !== -1 ? dateIndex : 4];
+      const getTimeCell = (row) => row.cells[timeIndex !== -1 ? timeIndex : 5];
+      const getStatusCell = (row) => row.cells[statusIndex !== -1 ? statusIndex : 6];
+      const getPriceCell = (row) => {
+        // Try to find the price cell based on the header or use specific logic
+        if (priceIndex !== -1) {
+          return row.cells[priceIndex];
+        } else {
+          // Try to find a cell that looks like it contains price
+          for (let i = 0; i < row.cells.length; i++) {
+            const cellText = row.cells[i]?.textContent?.trim() || '';
+            if (cellText.includes('₹') || cellText.includes('Rs.')) {
+              return row.cells[i];
+            }
+          }
+          // If nothing found, guess that price is after status
+          const fallbackIndex = statusIndex !== -1 ? statusIndex + 1 : 7;
+          return row.cells[fallbackIndex < row.cells.length ? fallbackIndex : row.cells.length - 1];
+        }
+      };
+      
+      rows.forEach((row, rowIndex) => {
+        try {
+          // Extract table information
+          const tableCell = getTableCell(row)?.textContent?.trim() || '';
+          let tableId = 'Unknown';
+          // Try various patterns to find table ID
+          const tablePatterns = [
+            /Table\s+(\d+)/i,            // "Table 12"
+            /Table\s+(\w+)/i,            // "Table A"
+            /(\d+)\s+\(\w+:\s*\d+\)/,    // "12 (Seats: 4)"
+            /(\d+)/                      // Just the number
+          ];
+          
+          for (const pattern of tablePatterns) {
+            const match = tableCell.match(pattern);
+            if (match) {
+              tableId = match[1];
+              break;
+            }
+          }
+          
+          // Extract date information
+          const dateCell = getDateCell(row)?.textContent?.trim() || '';
+          let dateObj = null;
+          let month = 'Unknown';
+          
+          // Try various date formats
+          const dateCleaned = dateCell.replace(/\s+/g, ' ').trim();
+          const datePatterns = [
+            /(\d{4})-(\d{2})-(\d{2})/, // ISO format yyyy-mm-dd
+            /(\d{2})-(\d{2})-(\d{4})/, // dd-mm-yyyy
+            /(\d{2})\/(\d{2})\/(\d{4})/, // dd/mm/yyyy
+            /(\d{4})\/(\d{2})\/(\d{2})/, // yyyy/mm/dd
+            /(\w+)\s+(\d{1,2}),\s*(\d{4})/ // Month D, YYYY
+          ];
+          
+          for (const pattern of datePatterns) {
+            const match = dateCleaned.match(pattern);
+            if (match) {
+              try {
+                if (pattern.toString().includes('\\w+')) {
+                  // Format like "January 1, 2023"
+                  const monthStr = match[1];
+                  const day = match[2];
+                  const year = match[3];
+                  dateObj = new Date(`${monthStr} ${day}, ${year}`);
+                } else if (pattern.toString().startsWith('/\\d{4}')) {
+                  // yyyy-mm-dd or yyyy/mm/dd
+                  dateObj = new Date(`${match[1]}-${match[2]}-${match[3]}`);
+                } else {
+                  // dd-mm-yyyy or dd/mm/yyyy
+                  dateObj = new Date(`${match[3]}-${match[2]}-${match[1]}`);
+                }
+                if (!isNaN(dateObj.getTime())) {
+                  month = dateObj.toLocaleString('default', { month: 'short' });
+                  break;
+                }
+              } catch (e) {
+                console.warn(`Failed to parse date: ${dateCleaned}`, e);
+              }
+            }
+          }
+          
+          // If still not parsed, try as a last resort
+          if (!dateObj && dateCleaned) {
+            try {
+              dateObj = new Date(dateCleaned);
+              if (!isNaN(dateObj.getTime())) {
+                month = dateObj.toLocaleString('default', { month: 'short' });
+              }
+            } catch (e) {
+              console.warn(`Failed to parse date with native parsing: ${dateCleaned}`, e);
+            }
+          }
+          
+          // Extract status
+          const statusCell = getStatusCell(row)?.textContent?.trim().toLowerCase() || '';
+          let status = 'unknown';
+          
+          if (statusCell.includes('book') || statusCell.includes('confirm') || statusCell.includes('active') || 
+              (getStatusCell(row)?.querySelector('.badge-booked') !== null)) {
+            status = 'booked';
+          } else if (statusCell.includes('cancel') || statusCell.includes('reject') || 
+                    (getStatusCell(row)?.querySelector('.badge-canceled') !== null)) {
+            status = 'canceled';
+          }
+          
+          // Extract price information
+          let price = 0;
+          const priceCell = getPriceCell(row)?.textContent?.trim() || '';
+          console.log(`Row ${rowIndex} price cell content:`, priceCell);
+          
+          const pricePatterns = [
+            /₹\s*(\d+(?:\.\d+)?)/,    // ₹500 or ₹ 500
+            /(\d+(?:\.\d+)?)\s*₹/,    // 500₹  
+            /Rs\.\s*(\d+(?:\.\d+)?)/i, // Rs. 500
+            /(\d+(?:\.\d+)?)\s*Rs\./i, // 500 Rs.
+            /(\d+(?:\.\d+)?)/ // Just the number as a fallback
+          ];
+          
+          for (const pattern of pricePatterns) {
+            const match = priceCell.match(pattern);
+            if (match) {
+              price = parseFloat(match[1]);
+              console.log(`Row ${rowIndex} extracted price:`, price);
+              break;
+            }
+          }
+          
+          // If no price found, check other fields for price information
+          if (price === 0) {
+            for (let i = 0; i < row.cells.length; i++) {
+              const cellText = row.cells[i]?.textContent?.trim() || '';
+              if (cellText.includes('₹') || cellText.includes('Rs.')) {
+                for (const pattern of pricePatterns) {
+                  const match = cellText.match(pattern);
+                  if (match) {
+                    price = parseFloat(match[1]);
+                    console.log(`Found price in cell ${i}:`, price);
+                    break;
+                  }
+                }
+                if (price > 0) break;
+              }
+            }
+          }
+          
+          // For debugging
+          if (price === 0) {
+            console.warn(`Could not extract price for row ${rowIndex}`);
+          }
+          
+          totalRevenue += price;
+          totalBookings++;
+          
+          // Aggregate by table
+          if (!tables[tableId]) {
+            tables[tableId] = { count: 0, revenue: 0, booked: 0, canceled: 0 };
+          }
+          tables[tableId].count++;
+          tables[tableId].revenue += price;
+          
+          // Count by status for each table
+          if (status === 'booked') {
+            tables[tableId].booked++;
+          } else if (status === 'canceled') {
+            tables[tableId].canceled++;
+          }
+          
+          // Aggregate by month
+          if (!dateMap[month]) {
+            dateMap[month] = { count: 0, revenue: 0, booked: 0, canceled: 0 };
+          }
+          dateMap[month].count++;
+          dateMap[month].revenue += price;
+          
+          // Count by status for each month
+          if (status === 'booked') {
+            dateMap[month].booked++;
+          } else if (status === 'canceled') {
+            dateMap[month].canceled++;
+          }
+          
+          // Aggregate by status overall
+          if (!statusMap[status]) {
+            statusMap[status] = 0;
+          }
+          statusMap[status]++;
+        } catch (error) {
+          console.error(`Error processing row ${rowIndex}:`, error);
+        }
+      });
+      
+      // For debugging
+      console.log('Processed tables:', tables);
+      console.log('Processed months:', dateMap);
+      
+      // Check if we have valid data
+      if (Object.keys(tables).length === 0) {
+        console.warn('Could not extract any table data from the bookings table');
+        return {
+          tables: [],
+          counts: [],
+          revenues: [],
+          booked: [],
+          canceled: [],
+          months: [],
+          monthlyBookings: [],
+          monthlyRevenue: [],
+          monthlyBooked: [],
+          monthlyCanceled: [],
+          totalRevenue: 0,
+          statusDistribution: {
+            booked: 0,
+            canceled: 0,
+            unknown: 0
+          }
+        };
+      }
+      
+      // Sort tables by ID if they're numeric
+      const tableIds = Object.keys(tables).sort((a, b) => {
+        const numA = parseInt(a);
+        const numB = parseInt(b);
+        if (!isNaN(numA) && !isNaN(numB)) {
+          return numA - numB;
+        }
+        return a.localeCompare(b);
+      });
+      
+      // Convert to arrays for Chart.js
+      const tableLabels = tableIds.map(id => {
+        // Try to present table labels nicely
+        return isNaN(parseInt(id)) ? id : `Table ${id}`;
+      });
+      
+      const tableCounts = tableIds.map(id => tables[id].count);
+      const tableRevenues = tableIds.map(id => tables[id].revenue);
+      const tableBooked = tableIds.map(id => tables[id].booked);
+      const tableCanceled = tableIds.map(id => tables[id].canceled);
+      
+      // Sort months chronologically
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      let availableMonths = Object.keys(dateMap)
+        .filter(m => months.includes(m))
+        .sort((a, b) => months.indexOf(a) - months.indexOf(b));
+      
+      // If no valid months extracted, use current and previous months
+      if (availableMonths.length === 0) {
+        const currentDate = new Date();
+        for (let i = 5; i >= 0; i--) {
+          const monthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
+          const monthName = monthDate.toLocaleString('default', { month: 'short' });
+          availableMonths.push(monthName);
+          if (!dateMap[monthName]) {
+            dateMap[monthName] = { count: 0, revenue: 0, booked: 0, canceled: 0 };
+          }
+        }
+      }
+      
+      const monthlyBookings = availableMonths.map(m => dateMap[m].count);
+      const monthlyRevenue = availableMonths.map(m => dateMap[m].revenue);
+      const monthlyBooked = availableMonths.map(m => dateMap[m].booked);
+      const monthlyCanceled = availableMonths.map(m => dateMap[m].canceled);
+      
+      // For debugging
+      console.log('Table counts:', tableCounts);
+      console.log('Table revenues:', tableRevenues);
+      console.log('Monthly revenue:', monthlyRevenue);
+      
+      return {
+        tables: tableLabels,
+        counts: tableCounts,
+        revenues: tableRevenues,
+        booked: tableBooked,
+        canceled: tableCanceled,
+        months: availableMonths,
+        monthlyBookings, 
+        monthlyRevenue,
+        monthlyBooked,
+        monthlyCanceled,
+        totalRevenue,
+        totalBookings,
+        statusDistribution: {
+          booked: statusMap['booked'] || 0,
+          canceled: statusMap['canceled'] || 0,
+          unknown: statusMap['unknown'] || 0
+        }
+      };
+    }
+    
+    function generateRandomData(count, min, max) {
+      // Function kept for backward compatibility but not used with real data
+      return Array.from({ length: count }, () => Math.floor(Math.random() * (max - min + 1)) + min);
+    }
+    
+    function generateColors(count) {
+      const colors = [];
+      const baseColors = ['#ce1212', '#2c3e50', '#3498db', '#f39c12', '#27ae60', '#8e44ad', '#e74c3c', '#1abc9c'];
+      for (let i = 0; i < count; i++) {
+        colors.push(baseColors[i % baseColors.length]);
+      }
+      return colors;
+    }
+    
+    function createDoughnutChart(data) {
+      const doughnutCtx = document.getElementById('doughnutChart').getContext('2d');
+      
+      // Check if we have data to display
+      if (data.tables.length === 0) {
+        displayNoDataMessage(doughnutCtx, 'No booking data available');
+        return;
+      }
+      
+      new Chart(doughnutCtx, {
+        type: 'doughnut',
+        data: {
+          labels: data.tables,
+          datasets: [{
+            data: data.counts,
+            backgroundColor: generateColors(data.tables.length),
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Bookings by Table'
+            },
+            legend: {
+              position: 'bottom',
+              labels: {
+                boxWidth: 12
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const count = context.raw;
+                  const total = data.counts.reduce((sum, val) => sum + val, 0);
+                  return `${count} bookings (${Math.round(count/total*100)}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    function createBarChart(data) {
+      const barCtx = document.getElementById('barChart').getContext('2d');
+      
+      // Check if we have data to display
+      if (data.months.length === 0) {
+        displayNoDataMessage(barCtx, 'No monthly booking data available');
+        return;
+      }
+      
+      new Chart(barCtx, {
+        type: 'bar', 
+        data: {
+          labels: data.months,
+          datasets: [{
+            label: 'Booked',
+            data: data.monthlyBooked,
+            backgroundColor: '#ce1212',
+            borderWidth: 0,
+            borderRadius: 5,
+            categoryPercentage: 0.7,
+            barPercentage: 0.8
+          }, {
+            label: 'Canceled',
+            data: data.monthlyCanceled,
+            backgroundColor: '#f39c12',
+            borderWidth: 0,
+            borderRadius: 5,
+            categoryPercentage: 0.7,
+            barPercentage: 0.8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Monthly Booking Status'
+            },
+            legend: {
+              display: true,
+              position: 'bottom'
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `${context.dataset.label}: ${context.raw} bookings`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Number of Bookings'
+              },
+              stacked: false
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Month'
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    function createLineChart(data) {
+      const lineCtx = document.getElementById('lineChart').getContext('2d');
+      
+      // Check if we have data to display
+      if (data.months.length === 0) {
+        displayNoDataMessage(lineCtx, 'No revenue data available');
+        return;
+      }
+      
+      new Chart(lineCtx, {
+        type: 'line',
+        data: {
+          labels: data.months,
+          datasets: [{
+            label: 'Revenue',
+            data: data.monthlyRevenue,
+            borderColor: '#2c3e50',
+            backgroundColor: 'rgba(44, 62, 80, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: 'Revenue Trend'
+            },
+            legend: {
+              display: false
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return `₹${context.raw}`;
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Revenue (₹)'
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    function displayNoDataMessage(ctx, message) {
+      // Clear the canvas
+      const chart = Chart.getChart(ctx.canvas);
+      if (chart) {
+        chart.destroy();
+      }
+      
+      // Draw the message
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = '14px Arial';
+      ctx.fillStyle = '#666';
+      ctx.fillText(message, ctx.canvas.width / 2, ctx.canvas.height / 2);
+      ctx.restore();
+    }
+    
+    function displayEmptyCharts() {
+      const chartCanvas = document.getElementById('doughnutChart');
+      const barCanvas = document.getElementById('barChart');
+      const lineCanvas = document.getElementById('lineChart');
+      
+      displayNoDataMessage(chartCanvas.getContext('2d'), 'No booking data available');
+      displayNoDataMessage(barCanvas.getContext('2d'), 'No booking data available');
+      displayNoDataMessage(lineCanvas.getContext('2d'), 'No revenue data available');
+    }
+    
+    function initFileUploads() {
+      // CSV file upload
+      const csvInput = document.getElementById('csv-file');
+      csvInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          // Display filename
+          document.querySelector('#csv-upload-container h5').textContent = file.name;
+          
+          // Read and parse CSV
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const csv = e.target.result;
+            const lines = csv.split('\n');
+            const headers = lines[0].split(',');
+            
+            let tableHtml = '';
+            for (let i = 1; i < Math.min(lines.length, 6); i++) {
+              if (lines[i].trim()) {
+                const values = lines[i].split(',');
+                tableHtml += '<tr>';
+                for (let j = 0; j < Math.min(headers.length, 4); j++) {
+                  tableHtml += `<td>${values[j]}</td>`;
+                }
+                tableHtml += '</tr>';
+              }
+            }
+            
+            document.getElementById('csv-data').innerHTML = tableHtml;
+            document.getElementById('csv-preview').style.display = 'block';
+            checkEnableSubmit();
+          };
+          reader.readAsText(file);
+        }
+      });
+      
+      // Image files upload
+      const imageInput = document.getElementById('image-files');
+      imageInput.addEventListener('change', function(e) {
+        const files = e.target.files;
+        if (files.length > 0) {
+          // Display count
+          document.querySelector('#image-upload-container h5').textContent = `${files.length} image${files.length > 1 ? 's' : ''} selected`;
+          
+          // Clear previous previews
+          const previewContainer = document.getElementById('image-preview');
+          previewContainer.innerHTML = '';
+          
+          // Create preview for each image
+          Array.from(files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              const img = document.createElement('img');
+              img.src = e.target.result;
+              img.className = 'image-preview';
+              img.title = file.name;
+              previewContainer.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+          });
+          
+          previewContainer.style.display = 'flex';
+          checkEnableSubmit();
+        }
+      });
+    }
+    
+    function checkEnableSubmit() {
+      const csvFile = document.getElementById('csv-file').files.length > 0;
+      const imageFiles = document.getElementById('image-files').files.length > 0;
+      
+      document.getElementById('update-menu-btn').disabled = !(csvFile && imageFiles);
+    }
+    
+    function filterBookings() {
+      const dateFrom = document.getElementById('date-from').value;
+      const dateTo = document.getElementById('date-to').value;
+      const status = document.getElementById('status-filter').value;
+      const searchTerm = document.getElementById('search-input').value.toLowerCase();
+      
+      const tableRows = document.querySelectorAll('#bookings-table tbody tr');
+      
+      tableRows.forEach(row => {
+        if (row.cells.length < 5) return; // Skip the "no reservations" row
+        
+        const dateCell = row.cells[4].textContent;
+        const statusText = row.cells[6].textContent.trim().toLowerCase();
+        const allText = Array.from(row.cells).map(cell => cell.textContent.toLowerCase()).join(' ');
+        
+        let show = true;
+        
+        if (dateFrom && new Date(dateCell) < new Date(dateFrom)) {
+          show = false;
+        }
+        
+        if (dateTo && new Date(dateCell) > new Date(dateTo)) {
+          show = false;
+        }
+        
+        if (status && !statusText.includes(status.toLowerCase())) {
+          show = false;
+        }
+        
+        if (searchTerm && !allText.includes(searchTerm)) {
+          show = false;
+        }
+        
+        row.style.display = show ? '' : 'none';
+      });
+      
+      // Check if any rows are visible
+      const visibleRows = Array.from(tableRows).filter(row => row.style.display !== 'none');
+      
+      if (visibleRows.length === 0) {
+        // No matching rows, show "no results" message
+        const tbody = document.querySelector('#bookings-table tbody');
+        const existingNoResults = document.getElementById('no-results-row');
+        
+        if (!existingNoResults) {
+          const noResultsRow = document.createElement('tr');
+          noResultsRow.id = 'no-results-row';
+          noResultsRow.innerHTML = `
+            <td colspan="8" class="text-center py-5">
+              <i class="bi bi-search" style="font-size: 3rem; color: var(--secondary-color); display: block; margin-bottom: 15px;"></i>
+              <h5>No Matching Results</h5>
+              <p>Try adjusting your filters or search terms.</p>
+            </td>
+          `;
+          tbody.appendChild(noResultsRow);
+        }
+      } else {
+        const existingNoResults = document.getElementById('no-results-row');
+        if (existingNoResults) {
+          existingNoResults.remove();
+        }
+      }
+    }
+    
+    function resetFilters() {
+      document.getElementById('date-from').value = '';
+      document.getElementById('date-to').value = '';
+      document.getElementById('status-filter').value = '';
+      document.getElementById('search-input').value = '';
+      
+      // Show all rows again
+      const tableRows = document.querySelectorAll('#bookings-table tbody tr');
+      tableRows.forEach(row => {
+        row.style.display = '';
+      });
+      
+      // Remove any "no results" row
+      const noResultsRow = document.getElementById('no-results-row');
+      if (noResultsRow) {
+        noResultsRow.remove();
+      }
+    }
+    
+    function viewDetails(id) {
+      alert(`View details for reservation #${id}`);
+      // This would typically open a modal with reservation details
+    }
+    
+    function changeStatus(id, newStatus) {
+      if (confirm(`Are you sure you want to cancel this reservation?`)) {
+        fetch(`/reservation-delete/${id}/`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.status) {
+            // Refresh the page to show updated status
+            window.location.reload();
+          } else {
+            alert('Failed to update reservation status');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while updating the reservation status');
+        });
+        alert(`Status updated to: ${newStatus}`);
+      }
+    }
+  </script>
+</body>
+</html>

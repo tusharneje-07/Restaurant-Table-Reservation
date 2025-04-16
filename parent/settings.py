@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import dotenv
+import os
+
+dotenv.load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,8 +29,21 @@ SECRET_KEY = 'django-insecure-z1+3p_mw4$ex0b!+(!h(eli75$*v-f%1y1eav8-m&dky3ix_$)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["special-tuna-previously.ngrok-free.app","localhost","127.0.0.1"]
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://special-tuna-previously.ngrok-free.app',
+    'http://localhost',
+    'http://127.0.0.1'
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'https://special-tuna-previously.ngrok-free.app',
+    'http://localhost',
+    'http://127.0.0.1'
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -98,11 +115,11 @@ WSGI_APPLICATION = 'parent.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'super_database',  # Replace with your MySQL database name
-        'USER': 'root',  # Replace with your MySQL username
-        'PASSWORD': 'SQL_root123',  # Replace with your MySQL password
-        'HOST': 'localhost',
-        'PORT': '3306',  # Default MySQL port
+        'NAME': os.getenv('MYSQL_ADDON_DB'), 
+        'USER': os.getenv('MYSQL_ADDON_USER'), 
+        'PASSWORD': os.getenv('MYSQL_ADDON_PASSWORD'), 
+        'HOST': os.getenv('MYSQL_ADDON_HOST'),
+        'PORT': os.getenv('MYSQL_ADDON_PORT'), 
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
         }

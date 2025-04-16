@@ -19,7 +19,7 @@ class Reservation(models.Model):
         ('confirmed', 'Confirmed'),
         ('failed', 'Failed'),
     ]
-
+    customer_username = models.CharField(max_length=100,default='0')
     customer_name = models.CharField(max_length=100)
     contact_number=models.CharField(
         max_length=10 ,
@@ -41,6 +41,11 @@ class Reservation(models.Model):
         choices=[('pending', 'Pending'), ('confirmed', 'Confirmed'), ('failed', 'Failed')], 
         default='pending'
     )
+    booking_status = models.CharField(
+        max_length=10,
+        choices=[('booked', 'booked'), ('cancelled', 'cancelled')],
+        default='booked'
+    )
     
     def is_table_available(self):
         
@@ -48,7 +53,7 @@ class Reservation(models.Model):
             table=self.table,
             date=self.date,
             arrival_time__lt=self.departure_time,
-            departure_time__gt=self.arrival_time
+            departure_time__gt=self.arrival_time,
         ).exists()
         return not overlapping_reservations  # True if available, False if not
 
@@ -109,10 +114,42 @@ class Payment(models.Model):
         return f"Payment {self.id} - {self.status}"
     
 
-
+class AllTransactions(models.Model):
+    customer_username = models.CharField(max_length=100,default='0')
+    booking_id = models.CharField(max_length=50,default='0')
+    customer_name = models.CharField(max_length=100)
+    contact_number=models.CharField(
+        max_length=10 ,
+        default='9999999999',
+        validators=[
+            RegexValidator(
+                regex=r'^\d{10}$',
+                message='Enter 10 digit contact number',
+                code='invalid_contact_number'
+            )
+        ]
+    )
+    table = models.ForeignKey(Table, on_delete=models.CASCADE)
+    date = models.DateField()
+    arrival_time = models.TimeField()
+    departure_time = models.TimeField()
+    status = models.CharField(
+        max_length=10, 
+        choices=[('pending', 'Pending'), ('confirmed', 'Confirmed'), ('failed', 'Failed')], 
+        default='pending'
+    )
+    booking_status = models.CharField(
+        max_length=10,
+        choices=[('booked', 'booked'), ('cancelled', 'cancelled')],
+        default='booked'
+    )
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    
+    
 admin.site.register(Table)
 admin.site.register(Reservation)
 admin.site.register(Payment)
+admin.site.register(AllTransactions)
 
 
 
