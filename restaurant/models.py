@@ -145,11 +145,22 @@ class AllTransactions(models.Model):
     )
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     
+class MenuItem(models.Model):
+    name = models.CharField(max_length=100)
+    category = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    image = models.TextField()
+    
+    def __str__(self):
+        return self.name
+    
+    
     
 admin.site.register(Table)
 admin.site.register(Reservation)
 admin.site.register(Payment)
 admin.site.register(AllTransactions)
+admin.site.register(MenuItem)
 
 
 

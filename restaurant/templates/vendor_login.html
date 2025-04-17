@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Restaurant Reservation</title>
+    <title>Naivedya Admin</title>
     {% load static %}
     <style>
         :root {
@@ -167,8 +167,10 @@
 <body>
     <div class="login-container">
         <div class="login-header">
-            <h1>Yummy Admin Panel</h1>
-            <p>Login to Yummy Admin Panel</p>
+            <h1>
+                <img src="{% static 'assets/img/Logo.png' %}" alt="Naivedya" style="height: 60px;">
+            </h1>
+            <p>Login to Naivedya Admin Panel</p>
         </div>
         <form action="/authenticate_vendor/" method="POST">
             {% csrf_token %}

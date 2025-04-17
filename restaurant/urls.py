@@ -1,8 +1,9 @@
 from django.urls import path
 from . import views
-from .views import UserCreateView, TableListCreateView, ReservationListCreateView, PaymentListCreateView,home,reservation_list,make_reservation,payment_page
+from .views import UserCreateView, TableListCreateView, ReservationListCreateView, PaymentListCreateView,home,reservation_list,make_reservation,payment_page, menu_card
 
 urlpatterns = [
+    path('signup/', views.signup, name='signup'),
     path('user_login/',views.login,name='login'),
     path('',home,name='home'),
     path('hotel-login/',views.hotel_login,name='hotel_login'),
@@ -28,6 +29,13 @@ urlpatterns = [
     path('vendor-login/',views.vendor_login,name='vendor_login'),
     path('vendor-dashboard/',views.vendor_dashboard,name='vendor_dashboard'),
     path('vendor-logout/',views.vendor_logout,name='vendor_logout'),
+    
+    path('upload_menu/',views.upload_menu,name='upload_menu'),
+    path('menu-card/', menu_card, name='menu_card'),
+    
+    path('create-account/', views.create_account, name='create_account'),
+    
+    # path('')
 ]
 
 

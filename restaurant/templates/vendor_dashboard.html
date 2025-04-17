@@ -4,12 +4,12 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Admin Dashboard - Yummy Restaurant</title>
+  <title>Naivedya Admin</title>
   <meta name="description" content="Restaurant Management Dashboard">
 
   <!-- Favicons -->
-  <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
-  <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+  <link href="{% static 'assets/img/icon.png' %}" rel="icon">
+  <link href="{% static 'assets/img/icon.png' %}" rel="apple-touch-icon">
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com" rel="preconnect">
@@ -166,17 +166,64 @@
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
     }
+    
+    /* Menu Item Thumbnail Responsive Styling */
+    .menu-item-thumbnail {
+      transition: transform 0.3s ease;
+    }
+    
+    .menu-item-thumbnail:hover {
+      transform: scale(1.5);
+      z-index: 10;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Category badge styling */
+    .badge {
+      display: inline-block;
+      padding: 0.35em 0.65em;
+      font-size: 0.75em;
+      font-weight: 700;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      border-radius: 0.25rem;
+    }
+    
+    @media (max-width: 768px) {
+      .menu-item-thumbnail {
+        width: 50px;
+        height: 50px;
+      }
+      
+      .admin-table td, .admin-table th {
+        padding: 8px 10px;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .menu-item-thumbnail {
+        width: 40px;
+        height: 40px;
+      }
+    }
   </style>
 </head>
 
 <body class="dashboard-page">
-
+  {% if menu_updated %}
+    <script>
+      alert('Menu updated successfully');
+    </script>
+  {% endif %}
   <header id="header" class="header d-flex align-items-center sticky-top">
     <div class="container position-relative d-flex align-items-center justify-content-between">
 
       <a href="index.html" class="logo d-flex align-items-center me-auto me-xl-0">
-        <h1 class="sitename">Yummy</h1>
-        <span>.</span>
+        <h1 class="sitename">
+          <img src="{% static 'assets/img/Logo.png' %}" alt="Naivedya" style="scale: 1.3;">
+        </h1>
       </a>
 
       <nav id="navmenu" class="navmenu">
@@ -303,6 +350,9 @@
             <div class="col-12 text-end">
               <button onclick="filterBookings()" class="btn" style="background-color: var(--secondary-color); color: white;">Apply Filters</button>
               <button onclick="resetFilters()" class="btn btn-light">Reset</button>
+              <button onclick="generatePDF()" class="btn" style="background-color: var(--primary-color); color: white;">
+                <i class="bi bi-file-earmark-pdf me-2"></i> Download PDF
+              </button>
             </div>
           </div>
         </div>
@@ -371,60 +421,147 @@
       </div>
 
       <div class="container" data-aos="fade-up" data-aos-delay="100">
-        <div class="row g-4">
-          <div class="col-lg-6">
+        <!-- QR Code Section -->
+        <div class="row mb-5">
+          <div class="col-12">
             <div class="dashboard-card">
-              <h4 style="margin-bottom: 20px; color: var(--primary-color);">Upload Menu Data (CSV)</h4>
-              <div class="file-upload-container" id="csv-upload-container">
-                <i class="bi bi-file-earmark-spreadsheet"></i>
-                <h5>Drop your CSV file here</h5>
-                <p>or</p>
-                <input type="file" id="csv-file" accept=".csv" class="d-none">
-                <button class="btn" style="background-color: var(--secondary-color); color: white;" onclick="document.getElementById('csv-file').click()">Select File</button>
-                <p class="mt-2 small text-muted">CSV file should include columns: name, description, price, category</p>
-              </div>
-              <div id="csv-preview" class="mt-4" style="display: none;">
-                <h5>Uploaded Menu Data</h5>
-                <div class="table-responsive">
-                  <table class="table table-sm">
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                        <th>Category</th>
-                      </tr>
-                    </thead>
-                    <tbody id="csv-data">
-                    </tbody>
-                  </table>
+              <h4 style="margin-bottom: 20px; color: var(--primary-color);">Menu QR Code</h4>
+              <div class="row align-items-center">
+                <div class="col-md-8">
+                  <p>Generate a QR code for your digital menu. Customers can scan this QR code to instantly view your menu on their mobile devices.</p>
+                  <p class="mb-0"><strong>Benefits:</strong></p>
+                  <ul class="mb-4">
+                    <li>Contactless menu browsing</li>
+                    <li>Eco-friendly alternative to printed menus</li>
+                    <li>Instant menu updates without reprinting</li>
+                  </ul>
+                  <button id="generate-qr-btn" class="btn mb-3" style="background-color: var(--secondary-color); color: white;">
+                    <i class="bi bi-qr-code me-2"></i> Generate & Download QR Code
+                  </button>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <div class="dashboard-card">
-              <h4 style="margin-bottom: 20px; color: var(--primary-color);">Upload Menu Images</h4>
-              <div class="file-upload-container" id="image-upload-container">
-                <i class="bi bi-images"></i>
-                <h5>Drop your image files here</h5>
-                <p>or</p>
-                <input type="file" id="image-files" accept="image/*" multiple class="d-none">
-                <button class="btn" style="background-color: var(--secondary-color); color: white;" onclick="document.getElementById('image-files').click()">Select Images</button>
-                <p class="mt-2 small text-muted">Supported formats: JPG, PNG, WEBP (Max size: 5MB each)</p>
-              </div>
-              <div id="image-preview" class="file-preview" style="display: none;">
-                <!-- Images will be displayed here -->
+                <div class="col-md-4 text-center">
+                  <div id="qrcode-container" style="margin: 0 auto; max-width: 200px;"></div>
+                  <p id="qr-instructions" class="small text-muted mt-2" style="display: none;">Right-click on the QR code and select "Save image as..." to download manually.</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
         
-        <div class="text-center mt-4" data-aos="fade-up" data-aos-delay="200">
-          <button id="update-menu-btn" class="btn btn-lg" style="background-color: var(--secondary-color); color: white; padding: 12px 25px;" disabled>
-            Update Menu
-          </button>
+        <!-- Current Menu Items Table -->
+        <div class="row mb-5">
+          <div class="col-12">
+            <div class="dashboard-card">
+              <h4 style="margin-bottom: 20px; color: var(--primary-color);">Current Menu Items</h4>
+              {% if menu_items and menu_items|length > 0 %}
+              <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                <table class="admin-table" id="current-menu-table" style="min-width: 800px;">
+                  <thead>
+                    <tr style="background-color: var(--secondary-color);">
+                      <th>#</th>
+                      <th>Name</th>
+                      <th>Category</th>
+                      <th>Price</th>
+                      <th>Image</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in menu_items %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>{{ item.name }}</td>
+                      <td>
+                        <span class="badge rounded-pill" style="background-color: var(--secondary-color);">
+                          {{ item.category }}
+                        </span>
+                      </td>
+                      <td>₹{{ item.price }}</td>
+                      <td>
+                        {% if item.image %}
+                        <img src="{{ item.image }}" class="menu-item-thumbnail" alt="{{ item.name }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd;">
+                        {% else %}
+                        <div class="no-image-placeholder" style="width: 60px; height: 60px; background-color: #f8f9fa; border-radius: 8px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd;">
+                          <i class="bi bi-image" style="color: #aaa;"></i>
+                        </div>
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              {% else %}
+              <div class="text-center py-5" style="background-color: #f8f9fa; border-radius: 10px;">
+                <i class="bi bi-menu-button" style="font-size: 3rem; color: var(--secondary-color); display: block; margin-bottom: 15px;"></i>
+                <h5>No Menu Items Found</h5>
+                <p>You haven't added any menu items yet. Use the form below to add your first menu items.</p>
+              </div>
+              {% endif %}
+            </div>
+          </div>
         </div>
+
+        <!-- Menu Update Form -->
+        <form method="POST" enctype="multipart/form-data" action="{% url 'upload_menu' %}">
+          {% csrf_token %}
+          <div class="row g-4">
+            <div class="col-lg-6">
+              <div class="dashboard-card">
+                <h4 style="color: var(--primary-color);">Upload Menu Data (CSV)
+                </h4>
+                <a href="{% static '/menu/menu.csv' %}" style="margin-bottom: 20px;">Download Menu Template</a>
+                
+                <div class="file-upload-container" id="csv-upload-container">
+                  <i class="bi bi-file-earmark-spreadsheet"></i>
+                  <h5>Drop your CSV file here</h5>
+                  <p>or</p>
+                  <input type="file" id="csv-file" name="csv_file" accept=".csv" class="d-none">
+                  <button type="button" class="btn" style="background-color: var(--secondary-color); color: white;" onclick="document.getElementById('csv-file').click()">Select File</button>
+                  <p class="mt-2 small text-muted">CSV file should include columns: name, description, price, category</p>
+                </div>
+                <div id="csv-preview" class="mt-4" style="display: none;">
+                  <h5>Uploaded Menu Data</h5>
+                  <div class="table-responsive">
+                    <table class="table table-sm">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Category</th>
+                          <th>Price</th>
+                          <th>Image</th>
+                        </tr>
+                      </thead>
+                      <tbody id="csv-data">
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="dashboard-card">
+                <h4 style="margin-bottom: 20px; color: var(--primary-color);">Upload Menu Images</h4>
+                <div class="file-upload-container" id="image-upload-container">
+                  <i class="bi bi-images"></i>
+                  <h5>Drop your image files here</h5>
+                  <p>or</p>
+                  <input type="file" id="image-files" name="menu_images" accept="image/*" multiple class="d-none">
+                  <button type="button" class="btn" style="background-color: var(--secondary-color); color: white;" onclick="document.getElementById('image-files').click()">Select Images</button>
+                  <p class="mt-2 small text-muted">Supported formats: JPG, PNG, WEBP (Max size: 5MB each)</p>
+                </div>
+                <div id="image-preview" class="file-preview" style="display: none;">
+                  <!-- Images will be displayed here -->
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="text-center mt-4" data-aos="fade-up" data-aos-delay="200">
+            <button type="submit" id="update-menu-btn" class="btn btn-lg" style="background-color: var(--secondary-color); color: white; padding: 12px 25px;" disabled>
+              Update Menu
+            </button>
+          </div>
+        </form>
       </div>
     </section><!-- /Menu Management Section -->
 
@@ -433,7 +570,7 @@
   <footer id="footer" class="footer dark-background">
     <div class="container">
       <div class="copyright text-center mt-4">
-        <p>© <span>Copyright</span> <strong class="px-1 sitename">Yummy</strong> <span>All Rights Reserved</span></p>
+        <p>© <span>Copyright</span> <strong class="px-1 sitename">Naivedya</strong> <span>All Rights Reserved</span></p>
       </div>
     </div>
   </footer>
@@ -1240,6 +1377,260 @@
         });
         alert(`Status updated to: ${newStatus}`);
       }
+    }
+    
+    // QR Code Generation
+    document.addEventListener('DOMContentLoaded', function() {
+      // Load QR Code library dynamically
+      const qrScript = document.createElement('script');
+      qrScript.src = 'https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js';
+      qrScript.onload = setupQRCodeGenerator;
+      document.head.appendChild(qrScript);
+      
+      function setupQRCodeGenerator() {
+        const generateQRBtn = document.getElementById('generate-qr-btn');
+        if (generateQRBtn) {
+          generateQRBtn.addEventListener('click', generateAndDownloadQR);
+        }
+      }
+      
+      function generateAndDownloadQR() {
+        const qrContainer = document.getElementById('qrcode-container');
+        qrContainer.innerHTML = '';
+        
+        // Get the current host
+        const host = window.location.origin;
+        const menuUrl = `${host}/menu-card/`;
+        
+        // Show instructions
+        document.getElementById('qr-instructions').style.display = 'block';
+        
+        // Generate QR code
+        try {
+          new QRCode(qrContainer, {
+            text: menuUrl,
+            width: 200,
+            height: 200,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+          });
+          
+          // Wait a moment for the QR code to render
+          setTimeout(() => {
+            try {
+              // Get the rendered QR code image
+              const qrImage = qrContainer.querySelector('img');
+              
+              if (qrImage) {
+                // Create download link
+                const downloadLink = document.createElement('a');
+                downloadLink.href = qrImage.src;
+                downloadLink.download = 'naivedya-menu-qr.png';
+                
+                // Trigger download
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                
+                console.log('QR code download initiated');
+              } else {
+                console.error('QR image not found in container');
+                qrContainer.innerHTML += '<p class="text-danger mt-2">QR code generated but image not found</p>';
+              }
+            } catch (downloadError) {
+              console.error('Error downloading QR code:', downloadError);
+              qrContainer.innerHTML += '<p class="text-danger mt-2">Error downloading QR code</p>';
+            }
+          }, 500);
+        } catch (error) {
+          console.error('Error generating QR code:', error);
+          qrContainer.innerHTML = '<p class="text-danger">Error generating QR code: ' + error.message + '</p>';
+        }
+      }
+    });
+    
+    // PDF Generation
+    function generatePDF() {
+      // Load jsPDF and html2canvas libraries dynamically
+      if (typeof jsPDF === 'undefined' || typeof html2canvas === 'undefined') {
+        const jsPDFScript = document.createElement('script');
+        jsPDFScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+        document.head.appendChild(jsPDFScript);
+        
+        const html2canvasScript = document.createElement('script');
+        html2canvasScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        document.head.appendChild(html2canvasScript);
+        
+        // Wait for scripts to load
+        const checkLibrariesLoaded = setInterval(() => {
+          if (typeof jsPDF !== 'undefined' && typeof html2canvas !== 'undefined') {
+            clearInterval(checkLibrariesLoaded);
+            setTimeout(() => {
+              generatePDFContent();
+            }, 500);
+          }
+        }, 100);
+      } else {
+        generatePDFContent();
+      }
+    }
+    
+    function generatePDFContent() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const margin = 15;
+      const contentWidth = pageWidth - (margin * 2);
+      let yPosition = 25;
+      
+      // Get logo
+      const logoImg = document.querySelector('.sitename img');
+      if (logoImg) {
+        // Use logo from the DOM
+        const canvas = document.createElement('canvas');
+        canvas.width = logoImg.width * 1.3; // Scale factor from the style
+        canvas.height = logoImg.height * 1.3;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(logoImg, 0, 0, canvas.width, canvas.height);
+        const logoData = canvas.toDataURL('image/png');
+        
+        // Add logo to PDF
+        doc.addImage(logoData, 'PNG', (pageWidth - 50) / 2, yPosition, 50, 50 * (logoImg.height / logoImg.width));
+        yPosition += 50 * (logoImg.height / logoImg.width) + 10;
+      }
+      
+      // Add title
+      doc.setFontSize(16);
+      doc.setTextColor(44, 62, 80); // primary-color
+      doc.setFont(undefined, 'bold');
+      doc.text('Reservation Report', pageWidth / 2, yPosition, { align: 'center' });
+      yPosition += 10;
+      
+      // Add date
+      doc.setFontSize(10);
+      doc.setFont(undefined, 'normal');
+      const today = new Date().toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+      doc.text(`Generated on: ${today}`, pageWidth / 2, yPosition, { align: 'center' });
+      yPosition += 15;
+      
+      // Get the table data
+      const table = document.getElementById('bookings-table');
+      const rows = Array.from(table.querySelectorAll('tbody tr')).filter(row => 
+        row.style.display !== 'none' && !row.querySelector('td[colspan]')
+      );
+      
+      // Define column headers and widths
+      const headers = ['#', 'Customer', 'Contact', 'Table', 'Date', 'Time', 'Status', 'Price'];
+      const columnWidths = [10, 35, 25, 25, 25, 35, 20, 20];
+      
+      if (rows.length === 0) {
+        // No data
+        doc.setFontSize(12);
+        doc.text('No reservation data available.', pageWidth / 2, yPosition + 20, { align: 'center' });
+      } else {
+        // Draw table headers
+        doc.setFillColor(206, 18, 18); // secondary-color
+        doc.setDrawColor(206, 18, 18);
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'bold');
+        
+        let xPosition = margin;
+        for (let i = 0; i < headers.length; i++) {
+          doc.rect(xPosition, yPosition, columnWidths[i], 10, 'F');
+          doc.text(headers[i], xPosition + columnWidths[i] / 2, yPosition + 6, { align: 'center' });
+          xPosition += columnWidths[i];
+        }
+        yPosition += 10;
+        
+        // Draw table rows
+        doc.setTextColor(44, 62, 80);
+        doc.setFontSize(9);
+        doc.setFont(undefined, 'normal');
+        
+        let rowCount = 0;
+        for (const row of rows) {
+          const cells = Array.from(row.querySelectorAll('td')).slice(0, 8); // Skip actions column
+          
+          // Check if we need a new page
+          if (yPosition > 265) {
+            doc.addPage();
+            yPosition = 20;
+            
+            // Redraw header on new page
+            doc.setFillColor(206, 18, 18);
+            doc.setDrawColor(206, 18, 18);
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(10);
+            doc.setFont(undefined, 'bold');
+            
+            xPosition = margin;
+            for (let i = 0; i < headers.length; i++) {
+              doc.rect(xPosition, yPosition, columnWidths[i], 10, 'F');
+              doc.text(headers[i], xPosition + columnWidths[i] / 2, yPosition + 6, { align: 'center' });
+              xPosition += columnWidths[i];
+            }
+            yPosition += 10;
+            doc.setTextColor(44, 62, 80);
+            doc.setFontSize(9);
+            doc.setFont(undefined, 'normal');
+          }
+          
+          // Draw row background (alternating)
+          if (rowCount % 2 === 0) {
+            doc.setFillColor(245, 247, 250);
+            doc.setDrawColor(245, 247, 250);
+            doc.rect(margin, yPosition, contentWidth, 10, 'F');
+          }
+          
+          // Draw cell values
+          xPosition = margin;
+          for (let i = 0; i < cells.length; i++) {
+            let cellText = cells[i].textContent.trim();
+            
+            // Special formatting for status
+            if (i === 6) {
+              if (cellText.toLowerCase().includes('booked')) {
+                doc.setTextColor(16, 185, 129); // green
+              } else if (cellText.toLowerCase().includes('cancel')) {
+                doc.setTextColor(239, 68, 68); // red
+              }
+            }
+            
+            // Limit text length based on column width
+            const maxChars = Math.floor(columnWidths[i] / 2);
+            if (cellText.length > maxChars) {
+              cellText = cellText.substring(0, maxChars - 2) + '...';
+            }
+            
+            doc.text(cellText, xPosition + columnWidths[i] / 2, yPosition + 6, { align: 'center' });
+            
+            // Reset text color
+            if (i === 6) {
+              doc.setTextColor(44, 62, 80);
+            }
+            
+            xPosition += columnWidths[i];
+          }
+          
+          yPosition += 10;
+          rowCount++;
+        }
+      }
+      
+      // Add footer
+      const footerY = doc.internal.pageSize.getHeight() - 10;
+      doc.setFontSize(8);
+      doc.setTextColor(100, 100, 100);
+      doc.text('© Naivedya Restaurant. All Rights Reserved.', pageWidth / 2, footerY, { align: 'center' });
+      
+      // Download the PDF
+      doc.save('naivedya-reservations-report.pdf');
     }
   </script>
 </body>
