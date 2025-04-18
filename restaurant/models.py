@@ -140,7 +140,7 @@ class AllTransactions(models.Model):
     )
     booking_status = models.CharField(
         max_length=10,
-        choices=[('booked', 'booked'), ('cancelled', 'cancelled')],
+        choices=[('booked', 'booked'), ('canceled', 'canceled')],
         default='booked'
     )
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)

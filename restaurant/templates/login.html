@@ -167,7 +167,9 @@
 <body>
     <div class="login-container">
         <div class="login-header">
-            <h1>Welcome Back</h1>
+            <h1>
+                <img src="{% static 'assets/img/logo.png' %}" alt="logo" style="height: 80px;">
+            </h1>
             <p>Please login to your account</p>
         </div>
         <form action="/authenticate/" method="POST">
@@ -183,6 +185,9 @@
             <button type="submit" class="login-button">Login</button>
             <div class="forgot-password">
                 <a href="/signup/">Don't have an account? Sign up</a>
+            </div>
+            <div class="forgot-password">
+                <a href="/vendor-login/">Are You Vendor? Login Here</a>
             </div>
             {% if error %}
                 <div class="error-message">
