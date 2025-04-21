@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Naivedya</title>
+    {% load static %}
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #ce1212;
+            --text-color: rgb(44, 22, 22);
+            --light-gray: #ecf0f1;
+            --white: #ffffff;
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--light-gray);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .signup-container {
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .signup-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--secondary-color);
+        }
+
+        .signup-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .signup-header h1 {
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .signup-header p {
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .password-strength {
+            font-size: 0.8rem;
+            font-weight: normal;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--light-gray);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            background: var(--white);
+        }
+
+        .validation-message {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--error-color);
+            display: none;
+        }
+
+        .password-requirements {
+            margin-top: 0.75rem;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 0.8rem;
+        }
+
+        .requirement {
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .requirement i {
+            margin-right: 8px;
+            font-size: 0.8rem;
+        }
+
+        .requirement.valid {
+            color: var(--success-color);
+        }
+
+        .requirement.invalid {
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+
+        .form-group.error input {
+            border-color: var(--error-color);
+        }
+
+        .form-group.success input {
+            border-color: var(--success-color);
+        }
+
+        .form-group .validation-message.show {
+            display: block;
+        }
+
+        .signup-button {
+            width: 100%;
+            padding: 1rem;
+            background: var(--secondary-color);
+            border: none;
+            border-radius: 8px;
+            color: var(--white);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .signup-button:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .signup-button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .login-link a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .login-link a:hover {
+            color: var(--primary-color);
+        }
+
+        .error-message {
+            color: var(--error-color);
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 480px) {
+            .signup-container {
+                padding: 2rem;
+            }
+
+            .signup-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .form-group input {
+                padding: 0.8rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .signup-container {
+                padding: 1.5rem;
+            }
+
+            .signup-header h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+    <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+</head>
+<body>
+    <div class="signup-container">
+        <div class="signup-header">
+            <h1>Create Account</h1>
+            <p>Please fill in the information below</p>
+        </div>
+        <form id="signup-form" action="/create-account/" method="POST">
+            {% csrf_token %}
+            <div class="form-group" id="username-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required placeholder="Choose a username" minlength="4">
+                <div class="validation-message" id="username-validation">Username must be at least 4 characters</div>
+            </div>
+            
+            <div class="form-group" id="password-group">
+                <label for="password">
+                    <span>Password</span>
+                    <span class="password-strength" id="password-strength">Weak</span>
+                </label>
+                <input type="password" id="password" name="password" required placeholder="Create a strong password">
+                <div class="validation-message" id="password-validation">Password does not meet the requirements</div>
+                <div class="password-requirements">
+                    <div class="requirement" id="length-requirement">
+                        <i class="bi bi-circle"></i> At least 8 characters
+                    </div>
+                    <div class="requirement" id="uppercase-requirement">
+                        <i class="bi bi-circle"></i> At least one uppercase letter
+                    </div>
+                    <div class="requirement" id="lowercase-requirement">
+                        <i class="bi bi-circle"></i> At least one lowercase letter
+                    </div>
+                    <div class="requirement" id="number-requirement">
+                        <i class="bi bi-circle"></i> At least one number
+                    </div>
+                    <div class="requirement" id="special-requirement">
+                        <i class="bi bi-circle"></i> At least one special character
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group" id="confirm-password-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" name="confirm_password" required placeholder="Re-enter your password">
+                <div class="validation-message" id="confirm-password-validation">Passwords do not match</div>
+            </div>
+            
+            <button type="submit" class="signup-button" id="signup-button" disabled>Create Account</button>
+            <div class="login-link">
+                <a href="/user_login/">Already have an account? Login</a>
+            </div>
+            {% if error %}
+                <script>
+                    alert('{{ error }}');
+                </script>
+            {% endif %}
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirm-password');
+            const signupButton = document.getElementById('signup-button');
+            const form = document.getElementById('signup-form');
+            
+            // Get validation message elements
+            const usernameValidation = document.getElementById('username-validation');
+            const passwordValidation = document.getElementById('password-validation');
+            const confirmPasswordValidation = document.getElementById('confirm-password-validation');
+            
+            // Get password requirement elements
+            const lengthRequirement = document.getElementById('length-requirement');
+            const uppercaseRequirement = document.getElementById('uppercase-requirement');
+            const lowercaseRequirement = document.getElementById('lowercase-requirement');
+            const numberRequirement = document.getElementById('number-requirement');
+            const specialRequirement = document.getElementById('special-requirement');
+            
+            // Get password strength indicator
+            const passwordStrength = document.getElementById('password-strength');
+            
+            // Track form validity
+            let isUsernameValid = false;
+            let isPasswordValid = false;
+            let isConfirmPasswordValid = false;
+            
+            // Username validation
+            usernameInput.addEventListener('input', function() {
+                const username = this.value.trim();
+                
+                if (username.length >= 4) {
+                    document.getElementById('username-group').classList.remove('error');
+                    document.getElementById('username-group').classList.add('success');
+                    usernameValidation.classList.remove('show');
+                    isUsernameValid = true;
+                } else {
+                    document.getElementById('username-group').classList.add('error');
+                    document.getElementById('username-group').classList.remove('success');
+                    usernameValidation.classList.add('show');
+                    isUsernameValid = false;
+                }
+                
+                updateSubmitButton();
+            });
+            
+            // Password validation
+            passwordInput.addEventListener('input', function() {
+                const password = this.value;
+                
+                // Check requirements
+                const hasLength = password.length >= 8;
+                const hasUppercase = /[A-Z]/.test(password);
+                const hasLowercase = /[a-z]/.test(password);
+                const hasNumber = /[0-9]/.test(password);
+                const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+                
+                // Update requirement indicators
+                updateRequirement(lengthRequirement, hasLength);
+                updateRequirement(uppercaseRequirement, hasUppercase);
+                updateRequirement(lowercaseRequirement, hasLowercase);
+                updateRequirement(numberRequirement, hasNumber);
+                updateRequirement(specialRequirement, hasSpecial);
+                
+                // Calculate password strength
+                let strength = 0;
+                if (hasLength) strength += 1;
+                if (hasUppercase) strength += 1;
+                if (hasLowercase) strength += 1;
+                if (hasNumber) strength += 1;
+                if (hasSpecial) strength += 1;
+                
+                updatePasswordStrength(strength);
+                
+                // Check overall password validity
+                isPasswordValid = hasLength && hasUppercase && hasLowercase && hasNumber && hasSpecial;
+                
+                if (isPasswordValid) {
+                    document.getElementById('password-group').classList.remove('error');
+                    document.getElementById('password-group').classList.add('success');
+                    passwordValidation.classList.remove('show');
+                } else {
+                    document.getElementById('password-group').classList.add('error');
+                    document.getElementById('password-group').classList.remove('success');
+                    passwordValidation.classList.add('show');
+                }
+                
+                // Also validate confirm password if it has content
+                if (confirmPasswordInput.value.length > 0) {
+                    validateConfirmPassword();
+                }
+                
+                updateSubmitButton();
+            });
+            
+            // Confirm password validation
+            confirmPasswordInput.addEventListener('input', validateConfirmPassword);
+            
+            function validateConfirmPassword() {
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+                
+                isConfirmPasswordValid = password === confirmPassword && password.length > 0;
+                
+                if (isConfirmPasswordValid) {
+                    document.getElementById('confirm-password-group').classList.remove('error');
+                    document.getElementById('confirm-password-group').classList.add('success');
+                    confirmPasswordValidation.classList.remove('show');
+                } else {
+                    document.getElementById('confirm-password-group').classList.add('error');
+                    document.getElementById('confirm-password-group').classList.remove('success');
+                    confirmPasswordValidation.classList.add('show');
+                }
+                
+                updateSubmitButton();
+            }
+            
+            // Update requirement indicator
+            function updateRequirement(element, isValid) {
+                if (isValid) {
+                    element.classList.add('valid');
+                    element.classList.remove('invalid');
+                    element.querySelector('i').className = 'bi bi-check-circle-fill';
+                } else {
+                    element.classList.remove('valid');
+                    element.classList.add('invalid');
+                    element.querySelector('i').className = 'bi bi-circle';
+                }
+            }
+            
+            // Update password strength indicator
+            function updatePasswordStrength(strength) {
+                let text, color;
+                
+                switch(strength) {
+                    case 0:
+                    case 1:
+                        text = 'Weak';
+                        color = '#e74c3c';
+                        break;
+                    case 2:
+                    case 3:
+                        text = 'Medium';
+                        color = '#f39c12';
+                        break;
+                    case 4:
+                        text = 'Strong';
+                        color = '#2ecc71';
+                        break;
+                    case 5:
+                        text = 'Very Strong';
+                        color = '#27ae60';
+                        break;
+                    default:
+                        text = 'Weak';
+                        color = '#e74c3c';
+                }
+                
+                passwordStrength.textContent = text;
+                passwordStrength.style.backgroundColor = color;
+                passwordStrength.style.color = 'white';
+            }
+            
+            // Enable/disable submit button
+            function updateSubmitButton() {
+                signupButton.disabled = !(isUsernameValid && isPasswordValid && isConfirmPasswordValid);
+            }
+            
+            // Form submission
+            form.addEventListener('submit', function(event) {
+                if (!(isUsernameValid && isPasswordValid && isConfirmPasswordValid)) {
+                    event.preventDefault();
+                    alert('Please correct the errors in the form before submitting.');
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

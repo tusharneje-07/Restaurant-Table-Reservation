@@ -3,11 +3,11 @@ from rest_framework.response import Response
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from datetime import datetime
-from .models import Table, Reservation, Payment, AllTransactions
+from .models import Table, Reservation, Payment, AllTransactions, MenuItem
 from .serializers import UserSerializer, TableSerializer, ReservationSerializer, PaymentSerializer
 from django.contrib.auth.models import User
 from django.db.models import Count, Sum
-
+import pandas as pd
 # User API
 class UserCreateView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -33,7 +33,7 @@ def home(request):
     username = request.COOKIES.get('username')
     tables = Table.objects.all()
     reservations = Reservation.objects.filter(customer_username=username).order_by('-date')
-    return render(request, 'yummy_main.html', {'tables': tables, 'username': username, 'reservations': reservations})
+    return render(request, 'yummy_main.html', {'tables': tables, 'username': username, 'reservations': reservations, 'menu_items':list(MenuItem.objects.all())})
 
 def login(request):
     return render(request, 'login.html')
@@ -203,8 +203,10 @@ def authenticate(request):
     username = request.POST['username']
     password = request.POST['password']
     user = User.objects.get(username=username)
+    print(user)
     if user is not None:
         if user.check_password(password):
+            print("password is correct")
             response = redirect('home')
             response.set_cookie('user', user.id)
             response.set_cookie('username', user.username)
@@ -238,7 +240,7 @@ def vendor_dashboard(request):
         total_revenue = AllTransactions.objects.aggregate(total_revenue=Sum('total_price'))['total_revenue']
         total_table_options = Table.objects.count()
         reservations = AllTransactions.objects.all()
-        return render(request, 'vendor_dashboard.html', {'total_bookings': total_bookings, 'table_vise_bookings': table_vise_bookings, 'total_revenue': total_revenue, 'total_table_options': total_table_options, 'reservations': reservations})
+        return render(request, 'vendor_dashboard.html', {'total_bookings': total_bookings, 'table_vise_bookings': table_vise_bookings, 'total_revenue': total_revenue, 'total_table_options': total_table_options, 'reservations': reservations,'menu_items':list(MenuItem.objects.all())})
 
 
 def vendor_logout(request):
@@ -247,3 +249,71 @@ def vendor_logout(request):
     response.delete_cookie('vendor_username')
     return response
 
+
+def upload_menu(request):
+    if request.method == 'POST':
+        menu_file = request.FILES['csv_file']
+        menu_images = request.FILES.getlist('menu_images')
+        
+        if menu_file.content_type == 'text/csv':
+            menu_data = pd.read_csv(menu_file)
+            
+            # Create menu directory if it doesn't exist
+            import os
+            menu_dir = 'static/menu'
+            if not os.path.exists(menu_dir):
+                os.makedirs(menu_dir)
+            
+            # Save menu images
+            for image in menu_images:
+                if image.content_type.startswith('image/'):
+                    try:
+                        with open(os.path.join(menu_dir, image.name), 'wb+') as destination:
+                            for chunk in image.chunks():
+                                destination.write(chunk)
+                    except Exception as e:
+                        return JsonResponse({"error": f"Error saving image {image.name}: {str(e)}"}, status=500)
+            
+            # Process menu data
+            try:
+                MenuItem.objects.all().delete()
+                for index, row in menu_data.iterrows():
+                    data = row.tolist()
+                    menu_item = MenuItem.objects.create(
+                        name=data[0],
+                        category=data[1],
+                        price=data[2],
+                        image="/static/menu/{}".format(data[3])
+                    )
+                total_bookings = Reservation.objects.count()
+                table_vise_bookings = list(AllTransactions.objects.values('table').annotate(total_bookings=Count('table'),total_revenue=Sum('total_price')))
+                total_revenue = AllTransactions.objects.aggregate(total_revenue=Sum('total_price'))['total_revenue']
+                total_table_options = Table.objects.count()
+                reservations = AllTransactions.objects.all()
+                
+                return render(request, 'vendor_dashboard.html', {'total_bookings': total_bookings, 'table_vise_bookings': table_vise_bookings, 'total_revenue': total_revenue, 'total_table_options': total_table_options, 'reservations': reservations, 'menu_updated': True,'menu_items':list(MenuItem.objects.all())})
+            except Exception as e:
+                return JsonResponse({"error": f"Error processing menu data: {str(e)}"}, status=500)
+        else:
+            return JsonResponse({"error": "Invalid file type. Please upload a CSV file."}, status=400)
+    
+    return JsonResponse({"message": "GET request received"})
+
+
+def menu_card(request):
+    return render(request, 'menu_card.html', {'menu_items':list(MenuItem.objects.all())})
+
+def signup(request):
+    return render(request, 'signup.html')
+
+def create_account(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        try:
+            user = User.objects.create_user(username=username, password=password)
+            user.save()
+            return redirect('login')
+        except Exception as e:
+            return render(request, 'signup.html', {'error': 'Username Not Available'})
+    return redirect('user_login')
